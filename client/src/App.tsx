@@ -66,7 +66,7 @@ function App(): JSX.Element {
     setDays(daysInCurrentWeek);
   }, []);
 
-  console.log(days);
+  // console.log(days);
 
   return (
     <>

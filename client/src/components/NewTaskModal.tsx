@@ -40,7 +40,6 @@ export default function NewTaskModal({ day }: { day: string }): JSX.Element {
     task: "",
     completed: false,
   });
-  //   const { days, setDays } = React.useContext(DayContext);
 
   const addNewTask = () => {
     const currentDay = days.map((el: DayInfo) => {
