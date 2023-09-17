@@ -4,39 +4,79 @@ import { Route, Routes } from "react-router-dom";
 import Today from "./pages/Today";
 import { DayContext } from "./context/DayContext";
 
-function App() {
-  const [days, setDays] = React.useState();
+interface DayInfo {
+  day: string;
+  date: string;
+  link: string;
+}
 
-  function getDaysInCurrentWeek() {
-    const currentDate = new Date();
-    const currentDayOfWeek = currentDate.getDay();
+interface CurrentDays {
+  day: string;
+  date: string;
+  tasks: never[];
+  link: string;
+}
 
-    const startDate = new Date(currentDate);
-    startDate.setDate(currentDate.getDate() - currentDayOfWeek);
+function App(): JSX.Element {
+  const [days, setDays] = React.useState<DayInfo[]>([]);
 
-    const daysInWeek = [];
+  React.useEffect(() => {
+    const getDaysInCurrentWeek = () => {
+      const currentDate: Date = new Date();
+      const currentDayOfWeek: number = currentDate.getDay();
+      const startDate: Date = new Date(currentDate);
+      startDate.setDate(currentDate.getDate() - currentDayOfWeek);
+      const daysInWeek: Date[] = [];
 
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(startDate);
-      day.setDate(startDate.getDate() + i);
-      daysInWeek.push(day);
-    }
+      for (let i = 0; i < 7; i++) {
+        const day = new Date(startDate);
+        day.setDate(startDate.getDate() + i);
+        daysInWeek.push(day);
+      }
+      return daysInWeek.map((el: Date) => {
+        const options: Intl.DateTimeFormatOptions = {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
+          timeZoneName: "short",
+        };
 
-    return daysInWeek;
-  }
+        const dateTimeString: string = el.toLocaleString("en-US", options);
+        const splittedDate: string[] = dateTimeString.split(" ");
 
-  const daysInCurrentWeek = getDaysInCurrentWeek();
-  console.log(daysInCurrentWeek);
+        return {
+          day: splittedDate[0].slice(0, -1),
+          date: splittedDate[1] + splittedDate[2] + splittedDate[3],
+          tasks: [],
+          link: splittedDate[0].slice(0, -1),
+        };
+      });
+    };
 
-  const date = getDaysInCurrentWeek();
+    const daysInCurrentWeek: CurrentDays[] = getDaysInCurrentWeek();
+    setDays(daysInCurrentWeek);
+  }, []);
 
-  console.log(date);
+  console.log(days);
+
   return (
     <>
       <Container>
         <DayContext.Provider value={{ days, setDays }}>
           <Routes>
-            <Route path="/tuesday" element={<Today day="Tuesday" />} />
+            {days.map((el: DayInfo) => {
+              return (
+                <Route
+                  key={el.day}
+                  path={el.link}
+                  element={<Today day={el.day} date={el.date} />}
+                />
+              );
+            })}
           </Routes>
         </DayContext.Provider>
       </Container>
