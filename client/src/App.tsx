@@ -4,10 +4,15 @@ import { Route, Routes } from "react-router-dom";
 import Today from "./pages/Today";
 import { DayContext } from "./context/DayContext";
 
+interface Task {
+  task: string;
+  completed: boolean;
+}
 interface DayInfo {
   day: string;
   date: string;
   link: string;
+  tasks: Task[];
 }
 
 interface CurrentDays {
@@ -21,7 +26,7 @@ function App(): JSX.Element {
   const [days, setDays] = React.useState<DayInfo[]>([]);
 
   React.useEffect(() => {
-    const getDaysInCurrentWeek = () => {
+    const getDaysInCurrentWeek = (): CurrentDays[] => {
       const currentDate: Date = new Date();
       const currentDayOfWeek: number = currentDate.getDay();
       const startDate: Date = new Date(currentDate);
@@ -73,7 +78,9 @@ function App(): JSX.Element {
                 <Route
                   key={el.day}
                   path={el.link}
-                  element={<Today day={el.day} date={el.date} />}
+                  element={
+                    <Today day={el.day} date={el.date} tasks={el.tasks} />
+                  }
                 />
               );
             })}
