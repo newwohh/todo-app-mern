@@ -8,6 +8,18 @@ interface Task {
   completed: boolean;
 }
 
+interface DayInfo {
+  day: string;
+  date: string;
+  link: string;
+  tasks: Task[];
+}
+
+interface SetContext {
+  days: DayInfo[];
+  setDays: any;
+}
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -28,10 +40,10 @@ export default function BasicModal({ day }: { day: string }): JSX.Element {
     task: "",
     completed: false,
   });
-  const { days, setDays } = React.useContext(DayContext);
+  const { days, setDays } = React.useContext<SetContext>(DayContext);
 
   const addNewTask = () => {
-    const currentDay = days.map((el: any) => {
+    const currentDay = days.map((el: DayInfo) => {
       if (el.day === day) {
         return {
           ...el,
@@ -48,6 +60,7 @@ export default function BasicModal({ day }: { day: string }): JSX.Element {
     <div>
       <Box sx={style}>
         <TextField
+          hiddenLabel
           label="Add title"
           InputProps={{
             style: {

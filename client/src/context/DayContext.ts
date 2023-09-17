@@ -1,3 +1,14 @@
 import { createContext } from "react";
 
-export const DayContext = createContext({});
+interface DayInfo {
+  day: string;
+  date: string;
+  link: string;
+}
+
+interface SetContext {
+  days: DayInfo[];
+  setDays: React.Dispatch<React.SetStateAction<DayInfo[]>>;
+}
+
+export const DayContext = createContext<SetContext | null>(null);

@@ -3,10 +3,18 @@ import { Button, Modal, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { DayContext } from "../context/DayContext";
 import NewTaskModal from "../components/NewTaskModal";
+import Checkbox from "@mui/material/Checkbox";
 
 interface Task {
   task: string;
   completed: boolean;
+}
+
+interface DayInfo {
+  day: string;
+  date: string;
+  link: string;
+  tasks: Task[];
 }
 
 function Today({
@@ -18,18 +26,10 @@ function Today({
   date: string;
   tasks: Task[];
 }) {
-  const { days } = React.useContext(DayContext);
-  const [open, setOpen] = React.useState(false);
+  const { days } = React.useContext<DayInfo[]>(DayContext);
+  const [open, setOpen] = React.useState<boolean>(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  console.log(days);
-
-  const todayData = days.filter((el: any) => {
-    return el.day === day;
-  });
-
-  const todayTasks = todayData[0].tasks;
-  console.log(todayTasks);
 
   return (
     <div>
@@ -37,6 +37,8 @@ function Today({
         style={{
           display: "flex",
           flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Typography
@@ -55,19 +57,40 @@ function Today({
         >
           {date.split(",")[0] + " " + date.split(",")[1]}
         </Typography>
-        <div>
-          {todayTasks.map((el, i) => {
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: "20px",
+            marginBottom: "20px",
+            flexDirection: "column",
+          }}
+        >
+          {tasks.map((el, i) => {
             return (
-              <Typography
-                key={i}
-                sx={{
-                  color: "grey",
-                  fontFamily: "Montserrat, sans-serif",
-                  fontSize: "18px",
+              <div
+                style={{
+                  display: "grid",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "300px",
+                  gridTemplateColumns: "115px 2px",
                 }}
               >
-                {el.task}
-              </Typography>
+                <Typography
+                  key={i}
+                  sx={{
+                    color: "grey",
+                    fontFamily: "Montserrat, sans-serif",
+                    fontSize: "18px",
+                    marginRight: "40px",
+                  }}
+                >
+                  {el.task}
+                </Typography>
+                <Checkbox color="default" sx={{ color: "lightcoral" }} />
+              </div>
             );
           })}
         </div>
@@ -75,6 +98,7 @@ function Today({
           startIcon={<AddIcon />}
           sx={{
             padding: "15px",
+            width: "140px",
             backgroundColor: "lightcoral",
             color: "white",
             borderRadius: "25px",
