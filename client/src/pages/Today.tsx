@@ -1,7 +1,6 @@
 import React from "react";
 import { Button, Modal, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { DayContext } from "../context/DayContext";
 import NewTaskModal from "../components/NewTaskModal";
 import Checkbox from "@mui/material/Checkbox";
 
@@ -10,23 +9,13 @@ interface Task {
   completed: boolean;
 }
 
-interface DayInfo {
+interface TodayProps {
   day: string;
   date: string;
-  link: string;
   tasks: Task[];
 }
 
-function Today({
-  day,
-  date,
-  tasks,
-}: {
-  day: string;
-  date: string;
-  tasks: Task[];
-}) {
-  const { days } = React.useContext<DayInfo[]>(DayContext);
+function Today({ day, date, tasks }: TodayProps): JSX.Element {
   const [open, setOpen] = React.useState<boolean>(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -119,7 +108,11 @@ function Today({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <NewTaskModal open={open} day={day} />
+        <NewTaskModal
+          day={day}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        />
       </Modal>
     </div>
   );

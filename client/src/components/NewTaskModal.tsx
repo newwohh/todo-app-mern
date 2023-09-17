@@ -17,7 +17,7 @@ interface DayInfo {
 
 interface SetContext {
   days: DayInfo[];
-  setDays: any;
+  setDays: React.Dispatch<React.SetStateAction<DayInfo[]>>;
 }
 
 const style = {
@@ -35,12 +35,12 @@ const style = {
   alignItems: "center",
 };
 
-export default function BasicModal({ day }: { day: string }): JSX.Element {
+export default function NewTaskModal({ day }: { day: string }): JSX.Element {
   const [newTask, setNewTask] = React.useState<Task>({
     task: "",
     completed: false,
   });
-  const { days, setDays } = React.useContext<SetContext>(DayContext);
+  //   const { days, setDays } = React.useContext(DayContext);
 
   const addNewTask = () => {
     const currentDay = days.map((el: DayInfo) => {
@@ -55,6 +55,13 @@ export default function BasicModal({ day }: { day: string }): JSX.Element {
     console.log(currentDay);
     setDays(currentDay);
   };
+
+  const dayContextValue = React.useContext(DayContext) as SetContext;
+  if (!dayContextValue) {
+    return <div>Loading...</div>;
+  }
+
+  const { days, setDays } = dayContextValue;
 
   return (
     <div>

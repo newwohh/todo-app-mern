@@ -22,13 +22,8 @@ interface CurrentDays {
   link: string;
 }
 
-interface SetContext {
-  days: DayInfo[];
-  setDays: React.Dispatch<React.SetStateAction<DayInfo[]>>;
-}
-
 function App(): JSX.Element {
-  const [days, setDays] = React.useState<SetContext["days"]>([]);
+  const [days, setDays] = React.useState<DayInfo[]>([]);
 
   React.useEffect(() => {
     const getDaysInCurrentWeek = (): CurrentDays[] => {

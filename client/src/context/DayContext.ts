@@ -4,6 +4,7 @@ interface DayInfo {
   day: string;
   date: string;
   link: string;
+  tasks: Task[];
 }
 
 interface SetContext {
@@ -11,4 +12,4 @@ interface SetContext {
   setDays: React.Dispatch<React.SetStateAction<DayInfo[]>>;
 }
 
-export const DayContext = createContext<SetContext | null>(null);
+export const DayContext = createContext<SetContext | undefined>(undefined);
