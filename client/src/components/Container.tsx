@@ -6,7 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import { AuthContext } from "../context/AuthContext";
 
 interface SetAuthContext {
-  user: string | null;
+  user: string;
   setUser: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
@@ -43,7 +43,7 @@ function Container({ children }: { children: React.ReactNode }) {
       console.log(res);
       location.reload();
     } catch (error) {
-      console.log(error.message);
+      console.log((error as Error).message);
     }
   };
 

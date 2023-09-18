@@ -23,6 +23,11 @@ interface SetContext {
   setDays: React.Dispatch<React.SetStateAction<DayInfo[]>>;
 }
 
+interface SetAuthContext {
+  user: string;
+  setUser: React.Dispatch<React.SetStateAction<string | null>>;
+}
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -39,7 +44,8 @@ const style = {
 };
 
 export default function NewTaskModal({ day }: { day: string }): JSX.Element {
-  const { user } = React.useContext(AuthContext);
+  const authContextValue = React.useContext(AuthContext) as SetAuthContext;
+  const { user } = authContextValue;
   const id = JSON.parse(user);
   const [newTask, setNewTask] = React.useState<Task>({
     day: "",
