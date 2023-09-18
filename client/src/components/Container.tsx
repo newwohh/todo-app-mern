@@ -34,7 +34,7 @@ function Container({ children }: { children: React.ReactNode }) {
   const deleteMe = async () => {
     try {
       const res = await axios.delete(
-        "http://localhost:5050/api/todo/deleteUser",
+        "https://dailydo.onrender.com/api/todo/deleteUser",
         {
           data: { id: id },
         }

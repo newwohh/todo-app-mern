@@ -70,7 +70,7 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
   const deleteTask = async (obj: Tasks) => {
     try {
       const userId = JSON.parse(user as string);
-      const deleteUrl = "http://localhost:5050/api/todo/deleteTask";
+      const deleteUrl = "https://dailydo.onrender.com/api/todo/deleteTask";
       const res = await axios.put(deleteUrl, { userId, taskTitle: obj.title });
 
       console.log(res);

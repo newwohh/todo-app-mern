@@ -30,7 +30,7 @@ function Login() {
   const loginOrRegisterUser = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5050/api/todo/createtodo",
+        "https://dailydo.onrender.com/api/todo/createtodo",
         {
           username: username.username,
         }

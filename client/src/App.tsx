@@ -35,7 +35,7 @@ function App(): JSX.Element {
   const getAllTodos = async () => {
     const id: string = user ? JSON.parse(user) : "";
     const todos: AxiosResponse = await axios.get(
-      `http://localhost:5050/api/todo/tasks/${id}`
+      `https://dailydo.onrender.com/api/todo/tasks/${id}`
     );
     localStorage.setItem("todos", JSON.stringify(todos.data.data.tasks));
     // console.log(todos.data.data.tasks);

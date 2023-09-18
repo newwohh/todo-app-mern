@@ -65,7 +65,7 @@ export default function NewTaskModal({ day }: { day: string }): JSX.Element {
 
   const addNewTask = async () => {
     const createNewTask = await axios.put(
-      "http://localhost:5050/api/todo/newTask",
+      "https://dailydo.onrender.com/api/todo/newTask",
       {
         id: id,
         task: newTask,
