@@ -1,50 +1,95 @@
 import React from "react";
 import axios from "axios";
-import { Button, Modal, Typography } from "@mui/material";
+import { Button, CircularProgress, Modal, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import NewTaskModal from "../components/NewTaskModal";
 import Checkbox from "@mui/material/Checkbox";
 import { AuthContext } from "../context/AuthContext";
 import Login from "../components/Login";
+import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 
-interface Task {
-  task: string;
+interface Tasks {
+  title: string;
+  day: string;
   completed: boolean;
+  _id: string;
 }
 
 interface TodayProps {
   day: string;
   date: string;
-  tasks: Task[];
+  tasks: Tasks[];
 }
 
 function Today({ day, date, tasks }: TodayProps): JSX.Element {
   const [open, setOpen] = React.useState<boolean>(false);
+  // const [checked, setChecked] = React.useState(true);
   const [openLogin, setOpenLogin] = React.useState<boolean>(false);
   const { user } = React.useContext(AuthContext);
+
+  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setChecked(event.target.checked);
+  // };
+
+  const deleteTask = async (id) => {
+    try {
+      const userId = JSON.parse(user);
+      const deleteUrl = "http://localhost:5050/api/todo/deleteTask";
+      const res = await axios.put(deleteUrl, { userId, taskId: id });
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleOpen = async () => {
     if (user) {
       setOpen(true);
-      const userNew = await axios.post(
-        "http://localhost:5050/api/todo/addTask",
-        {
-          id: user,
-          // task
-        }
-      );
-
-      console.log(userNew);
+      // console.log(userNew);
     } else if (!user) {
       setOpenLogin(true);
     }
   };
+  const fetchTodo = async () => {
+    try {
+      const userId = JSON.parse(user);
+      const todoData = await axios.get(
+        `http://localhost:5050/api/todo/tasks/${userId}`
+      );
+      // setDays(...days)
+      return todoData;
+      console.log(todoData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["todos"],
+    queryFn: () => fetchTodo(),
+  });
+
+  if (isLoading) {
+    return (
+      <div>
+        <CircularProgress sx={{ color: "lightcoral" }} />
+      </div>
+    );
+  }
+
+  const allTasks = data?.data.data.tasks;
+  console.log(allTasks, tasks);
 
   const handleClose = () => setOpen(false);
   const handleCloseLogin = () => setOpenLogin(false);
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <div
         style={{
           display: "flex",
@@ -81,7 +126,11 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
         >
           {tasks.map((el, i) => {
             return (
-              <div
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                key={i}
                 style={{
                   display: "grid",
                   justifyContent: "space-between",
@@ -99,10 +148,16 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
                     marginRight: "40px",
                   }}
                 >
-                  {el.task}
+                  {el?.title}
                 </Typography>
-                <Checkbox color="default" sx={{ color: "lightcoral" }} />
-              </div>
+                <Checkbox
+                  color="default"
+                  sx={{ color: "lightcoral" }}
+                  // checked={el.completed}
+                  // onChange={handleChange}
+                  onClick={() => deleteTask(el._id)}
+                />
+              </motion.div>
             );
           })}
         </div>
@@ -145,7 +200,7 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
       >
         <Login />
       </Modal>
-    </div>
+    </motion.div>
   );
 }
 

@@ -1,10 +1,13 @@
 import * as React from "react";
+import axios from "axios";
 import Box from "@mui/material/Box";
-import { Button, TextField } from "@mui/material";
+import { Button, CircularProgress, TextField } from "@mui/material";
 import { DayContext } from "../context/DayContext";
+import { AuthContext } from "../context/AuthContext";
 
 interface Task {
-  task: string;
+  day: string;
+  title: string;
   completed: boolean;
 }
 
@@ -36,12 +39,15 @@ const style = {
 };
 
 export default function NewTaskModal({ day }: { day: string }): JSX.Element {
+  const { user } = React.useContext(AuthContext);
+  const id = JSON.parse(user);
   const [newTask, setNewTask] = React.useState<Task>({
-    task: "",
+    day: "",
+    title: "",
     completed: false,
   });
 
-  const addNewTask = () => {
+  const addNewTask = async () => {
     const currentDay = days.map((el: DayInfo) => {
       if (el.day === day) {
         return {
@@ -53,11 +59,32 @@ export default function NewTaskModal({ day }: { day: string }): JSX.Element {
     });
     console.log(currentDay);
     setDays(currentDay);
+    let arrTodos = [];
+    const storedTodosJSON = localStorage.getItem("todos");
+    if (storedTodosJSON) {
+      arrTodos = JSON.parse(storedTodosJSON);
+    }
+
+    arrTodos.push(newTask);
+    localStorage.setItem("todos", JSON.stringify(arrTodos));
+
+    const createNewTask = await axios.put(
+      "http://localhost:5050/api/todo/newTask",
+      {
+        id: id,
+        task: newTask,
+      }
+    );
+    console.log(createNewTask);
   };
 
   const dayContextValue = React.useContext(DayContext) as SetContext;
   if (!dayContextValue) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <CircularProgress />
+      </div>
+    );
   }
 
   const { days, setDays } = dayContextValue;
@@ -74,7 +101,12 @@ export default function NewTaskModal({ day }: { day: string }): JSX.Element {
             },
           }}
           onChange={(e) =>
-            setNewTask({ ...newTask, task: e.target.value, completed: false })
+            setNewTask({
+              ...newTask,
+              title: e.target.value,
+              completed: false,
+              day: day,
+            })
           }
         />
         <Button

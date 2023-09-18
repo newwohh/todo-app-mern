@@ -1,6 +1,6 @@
 import React from "react";
+import axios from "axios";
 import { Route, Routes } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Container from "./components/Container";
 import Today from "./pages/Today";
 import { DayContext } from "./context/DayContext";
@@ -25,12 +25,29 @@ interface CurrentDays {
 }
 
 function App(): JSX.Element {
-  const query = new QueryClient();
   const [days, setDays] = React.useState<DayInfo[]>([]);
-  const [user, setUser] = React.useState<string | undefined | null>(undefined);
+  const [user, setUser] = React.useState<string | undefined | null>(null);
+
+  const getAllTodos = async () => {
+    const id = user ? JSON.parse(user) : "";
+    const todos = await axios.get(`http://localhost:5050/api/todo/tasks/${id}`);
+    localStorage.setItem("todos", JSON.stringify(todos.data.data.tasks));
+    console.log(todos.data.data.tasks);
+    location.reload();
+  };
+
+  const storedTodosJSON = localStorage.getItem("todos") || null;
+  const storedTodosArray: string[] = storedTodosJSON
+    ? JSON.parse(storedTodosJSON)
+    : [];
+  if (!storedTodosJSON) {
+    getAllTodos();
+  }
+  console.log(storedTodosArray);
 
   React.useEffect(() => {
     setUser(localStorage.getItem("user"));
+
     const getDaysInCurrentWeek = (): CurrentDays[] => {
       const currentDate: Date = new Date();
       const currentDayOfWeek: number = currentDate.getDay();
@@ -61,7 +78,7 @@ function App(): JSX.Element {
         return {
           day: splittedDate[0].slice(0, -1),
           date: splittedDate[1] + splittedDate[2] + splittedDate[3],
-          tasks: [],
+          tasks: storedTodosArray,
           link: splittedDate[0].slice(0, -1),
         };
       });
@@ -78,21 +95,19 @@ function App(): JSX.Element {
       <Container>
         <DayContext.Provider value={{ days, setDays }}>
           <AuthContext.Provider value={{ user, setUser }}>
-            <QueryClientProvider client={query}>
-              <Routes>
-                {days.map((el: DayInfo) => {
-                  return (
-                    <Route
-                      key={el.day}
-                      path={el.link}
-                      element={
-                        <Today day={el.day} date={el.date} tasks={el.tasks} />
-                      }
-                    />
-                  );
-                })}
-              </Routes>
-            </QueryClientProvider>
+            <Routes>
+              {days.map((el: DayInfo) => {
+                return (
+                  <Route
+                    key={el.day}
+                    path={el.link}
+                    element={
+                      <Today day={el.day} date={el.date} tasks={el.tasks} />
+                    }
+                  />
+                );
+              })}
+            </Routes>
           </AuthContext.Provider>
         </DayContext.Provider>
       </Container>
