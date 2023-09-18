@@ -24,20 +24,39 @@ interface TodayProps {
 
 function Today({ day, date, tasks }: TodayProps): JSX.Element {
   const [open, setOpen] = React.useState<boolean>(false);
-  // const [checked, setChecked] = React.useState(true);
+  const [checked, setChecked] = React.useState(false);
   const [openLogin, setOpenLogin] = React.useState<boolean>(false);
   const { user } = React.useContext(AuthContext);
 
-  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setChecked(event.target.checked);
-  // };
+  const handleCheck = () => {
+    setChecked(true);
+  };
 
-  const deleteTask = async (id) => {
+  const deleteTask = async (id: string) => {
     try {
       const userId = JSON.parse(user);
       const deleteUrl = "http://localhost:5050/api/todo/deleteTask";
       const res = await axios.put(deleteUrl, { userId, taskId: id });
+
       console.log(res);
+
+      let arrTodos = [];
+      const storedTodosJSON = localStorage.getItem("todos");
+      if (storedTodosJSON) {
+        arrTodos = JSON.parse(storedTodosJSON);
+      }
+
+      const updatedArr = arrTodos.map((el) => {
+        if (el._id === id) {
+          el.completed = true;
+        }
+      });
+      if (arrTodos) {
+        arrTodos.push(updatedArr);
+        localStorage.setItem("todos", JSON.stringify(arrTodos));
+      }
+      console.log(arrTodos, updatedArr);
+      handleCheck();
     } catch (error) {
       console.log(error);
     }
@@ -152,10 +171,9 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
                 </Typography>
                 <Checkbox
                   color="default"
+                  disabled={checked}
                   sx={{ color: "lightcoral" }}
-                  // checked={el.completed}
-                  // onChange={handleChange}
-                  onClick={() => deleteTask(el._id)}
+                  onChange={() => deleteTask(el?._id)}
                 />
               </motion.div>
             );
