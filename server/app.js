@@ -1,15 +1,15 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
+const routes = require("./routes/routes");
 
 const app = express();
+
+dotenv.config({ path: "./config/config.env" });
 
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-dotenv.config({ path: "./config/config.env" });
-
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Origin", req.headers.origin);
@@ -24,5 +24,6 @@ app.use(function (req, res, next) {
 
   next();
 });
+app.use("/api/todo", routes);
 
 module.exports = app;

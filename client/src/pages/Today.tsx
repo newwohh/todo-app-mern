@@ -64,7 +64,7 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
                   justifyContent: "space-between",
                   alignItems: "center",
                   width: "300px",
-                  gridTemplateColumns: "115px 2px",
+                  gridTemplateColumns: "130px 2px",
                 }}
               >
                 <Typography
