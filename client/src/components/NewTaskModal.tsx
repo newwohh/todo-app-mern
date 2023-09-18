@@ -9,6 +9,7 @@ interface Task {
   day: string;
   title: string;
   completed: boolean;
+  _id: string;
 }
 
 interface DayInfo {
@@ -51,6 +52,7 @@ export default function NewTaskModal({ day }: { day: string }): JSX.Element {
     day: "",
     title: "",
     completed: false,
+    _id: "",
   });
   const dayContextValue = React.useContext(DayContext) as SetContext;
   if (!dayContextValue) {
