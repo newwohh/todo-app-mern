@@ -1,6 +1,52 @@
 import React from "react";
+import axios from "axios";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import { AuthContext } from "../context/AuthContext";
+
+interface SetAuthContext {
+  user: string | null;
+  setUser: React.Dispatch<React.SetStateAction<string | null>>;
+}
 
 function Container({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = React.useState(false);
+  const authContextValue = React.useContext(AuthContext) as SetAuthContext;
+  const { user } = authContextValue;
+  const id = JSON.parse(user);
+  console.log(id);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("todos");
+    location.reload();
+  };
+
+  const deleteMe = async () => {
+    try {
+      const res = await axios.delete(
+        "http://localhost:5050/api/todo/deleteUser",
+        {
+          data: { id: id },
+        }
+      );
+
+      console.log(res);
+      location.reload();
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div
       style={{
@@ -10,10 +56,60 @@ function Container({ children }: { children: React.ReactNode }) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        flexDirection: "column-reverse",
       }}
     >
+      {user ? (
+        <Button
+          variant="outlined"
+          sx={{
+            backgroundColor: "white",
+            borderRadius: "20px",
+            color: "lightcoral",
+            border: "none",
+            boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
+            "&:hover": {
+              backgroundColor: "white",
+              border: "none",
+            },
+          }}
+          onClick={handleClickOpen}
+        >
+          Open alert dialog
+        </Button>
+      ) : (
+        ""
+      )}
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogActions sx={{ padding: "20px", borderRadius: "60px" }}>
+          <Button onClick={logout}>Logout</Button>
+          <Button
+            onClick={deleteMe}
+            sx={{
+              backgroundColor: "white",
+              borderRadius: "20px",
+              color: "lightcoral",
+              border: "none",
+              "&:hover": {
+                backgroundColor: "white",
+                border: "none",
+              },
+            }}
+            autoFocus
+          >
+            Delete Account
+          </Button>
+        </DialogActions>
+      </Dialog>
       <div
         style={{
+          marginBottom: "50px",
           height: "500px",
           width: "450px",
           backgroundColor: "white",

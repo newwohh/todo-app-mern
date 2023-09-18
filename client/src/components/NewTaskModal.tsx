@@ -46,8 +46,27 @@ export default function NewTaskModal({ day }: { day: string }): JSX.Element {
     title: "",
     completed: false,
   });
+  const dayContextValue = React.useContext(DayContext) as SetContext;
+  if (!dayContextValue) {
+    return (
+      <div>
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  const { days, setDays } = dayContextValue;
 
   const addNewTask = async () => {
+    const createNewTask = await axios.put(
+      "http://localhost:5050/api/todo/newTask",
+      {
+        id: id,
+        task: newTask,
+      }
+    );
+    console.log(createNewTask);
+
     const currentDay = days.map((el: DayInfo) => {
       if (el.day === day) {
         return {
@@ -67,27 +86,7 @@ export default function NewTaskModal({ day }: { day: string }): JSX.Element {
 
     arrTodos.push(newTask);
     localStorage.setItem("todos", JSON.stringify(arrTodos));
-
-    const createNewTask = await axios.put(
-      "http://localhost:5050/api/todo/newTask",
-      {
-        id: id,
-        task: newTask,
-      }
-    );
-    console.log(createNewTask);
   };
-
-  const dayContextValue = React.useContext(DayContext) as SetContext;
-  if (!dayContextValue) {
-    return (
-      <div>
-        <CircularProgress />
-      </div>
-    );
-  }
-
-  const { days, setDays } = dayContextValue;
 
   return (
     <div>

@@ -6,8 +6,9 @@ import NewTaskModal from "../components/NewTaskModal";
 import Checkbox from "@mui/material/Checkbox";
 import { AuthContext } from "../context/AuthContext";
 import Login from "../components/Login";
-import { useQuery } from "@tanstack/react-query";
+// import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { DayContext } from "../context/DayContext";
 
 interface Tasks {
   title: string;
@@ -16,49 +17,85 @@ interface Tasks {
   _id: string;
 }
 
+interface Task {
+  day: string;
+  title: string;
+  completed: boolean;
+}
+
 interface TodayProps {
   day: string;
   date: string;
   tasks: Tasks[];
 }
 
+interface DayInfo {
+  day: string;
+  date: string;
+  link: string;
+  tasks: Task[];
+}
+interface SetContext {
+  days: DayInfo[];
+  setDays: React.Dispatch<React.SetStateAction<DayInfo[]>>;
+}
+interface SetAuthContext {
+  user: string | null;
+  setUser: React.Dispatch<React.SetStateAction<string | null>>;
+}
 function Today({ day, date, tasks }: TodayProps): JSX.Element {
   const [open, setOpen] = React.useState<boolean>(false);
-  const [checked, setChecked] = React.useState(false);
   const [openLogin, setOpenLogin] = React.useState<boolean>(false);
-  const { user } = React.useContext(AuthContext);
+  const dayContextValue = React.useContext(DayContext) as SetContext;
+  const authContextValue = React.useContext(AuthContext) as SetAuthContext;
+  if (!dayContextValue) {
+    return (
+      <div>
+        <CircularProgress />
+      </div>
+    );
+  }
 
-  const handleCheck = () => {
-    setChecked(true);
-  };
+  if (authContextValue === undefined) {
+    return (
+      <div>
+        <CircularProgress />
+      </div>
+    );
+  }
 
-  const deleteTask = async (id: string) => {
+  const { days, setDays } = dayContextValue;
+  const { user } = authContextValue;
+
+  const deleteTask = async (obj: Tasks) => {
     try {
-      const userId = JSON.parse(user);
+      const userId = JSON.parse(user as string);
       const deleteUrl = "http://localhost:5050/api/todo/deleteTask";
-      const res = await axios.put(deleteUrl, { userId, taskId: id });
+      const res = await axios.put(deleteUrl, { userId, taskTitle: obj.title });
 
       console.log(res);
-
       let arrTodos = [];
+
+      // console.log(currentDay);
+
       const storedTodosJSON = localStorage.getItem("todos");
       if (storedTodosJSON) {
         arrTodos = JSON.parse(storedTodosJSON);
       }
-
-      const updatedArr = arrTodos.map((el) => {
-        if (el._id === id) {
-          el.completed = true;
+      const updatedArr = arrTodos.filter((el: Tasks) => el.title !== obj.title);
+      const currentDay = days.map((el: DayInfo) => {
+        if (el.day === day) {
+          return {
+            ...el,
+            tasks: updatedArr,
+          };
         }
+        return el;
       });
-      if (arrTodos) {
-        arrTodos.push(updatedArr);
-        localStorage.setItem("todos", JSON.stringify(arrTodos));
-      }
-      console.log(arrTodos, updatedArr);
-      handleCheck();
+      setDays(currentDay);
+      localStorage.setItem("todos", JSON.stringify(updatedArr));
     } catch (error) {
-      console.log(error);
+      error;
     }
   };
 
@@ -70,35 +107,6 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
       setOpenLogin(true);
     }
   };
-  const fetchTodo = async () => {
-    try {
-      const userId = JSON.parse(user);
-      const todoData = await axios.get(
-        `http://localhost:5050/api/todo/tasks/${userId}`
-      );
-      // setDays(...days)
-      return todoData;
-      console.log(todoData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["todos"],
-    queryFn: () => fetchTodo(),
-  });
-
-  if (isLoading) {
-    return (
-      <div>
-        <CircularProgress sx={{ color: "lightcoral" }} />
-      </div>
-    );
-  }
-
-  const allTasks = data?.data.data.tasks;
-  console.log(allTasks, tasks);
 
   const handleClose = () => setOpen(false);
   const handleCloseLogin = () => setOpenLogin(false);
@@ -169,12 +177,16 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
                 >
                   {el?.title}
                 </Typography>
-                <Checkbox
-                  color="default"
-                  disabled={checked}
-                  sx={{ color: "lightcoral" }}
-                  onChange={() => deleteTask(el?._id)}
-                />
+                {el?.title ? (
+                  <Checkbox
+                    color="default"
+                    disabled={el.completed}
+                    sx={{ color: "lightcoral" }}
+                    onChange={() => deleteTask(el)}
+                  />
+                ) : (
+                  ""
+                )}
               </motion.div>
             );
           })}

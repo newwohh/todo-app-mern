@@ -1,14 +1,16 @@
 import React from "react";
-import axios from "axios";
-import { Route, Routes } from "react-router-dom";
+import axios, { AxiosResponse } from "axios";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Container from "./components/Container";
 import Today from "./pages/Today";
 import { DayContext } from "./context/DayContext";
 import { AuthContext } from "./context/AuthContext";
 
 interface Task {
-  task: string;
+  day: string;
+  title: string;
   completed: boolean;
+  _id: string;
 }
 interface DayInfo {
   day: string;
@@ -24,30 +26,47 @@ interface CurrentDays {
   link: string;
 }
 
+type User = string;
+
 function App(): JSX.Element {
   const [days, setDays] = React.useState<DayInfo[]>([]);
-  const [user, setUser] = React.useState<string | undefined | null>(null);
+  const [user, setUser] = React.useState<User | null | string>(null);
 
   const getAllTodos = async () => {
-    const id = user ? JSON.parse(user) : "";
-    const todos = await axios.get(`http://localhost:5050/api/todo/tasks/${id}`);
+    const id: string = user ? JSON.parse(user) : "";
+    const todos: AxiosResponse = await axios.get(
+      `http://localhost:5050/api/todo/tasks/${id}`
+    );
     localStorage.setItem("todos", JSON.stringify(todos.data.data.tasks));
-    console.log(todos.data.data.tasks);
+    // console.log(todos.data.data.tasks);
     location.reload();
   };
 
-  const storedTodosJSON = localStorage.getItem("todos") || null;
-  const storedTodosArray: string[] = storedTodosJSON
-    ? JSON.parse(storedTodosJSON)
-    : [];
+  const storedTodosJSON: string | null = localStorage.getItem("todos") || null;
+  const storedTodosArray: string[] = React.useMemo(() => {
+    return storedTodosJSON ? JSON.parse(storedTodosJSON) : [];
+  }, [storedTodosJSON]);
   if (!storedTodosJSON) {
     getAllTodos();
   }
-  console.log(storedTodosArray);
+  // console.log(storedTodosArray);
+  const currentDate: Date = new Date();
+  const currentDayOfWeek: number = currentDate.getDay();
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const currentDayName = daysOfWeek[currentDayOfWeek];
+  const navigation = useNavigate();
 
   React.useEffect(() => {
     setUser(localStorage.getItem("user"));
-
+    navigation(`/${currentDayName}`);
     const getDaysInCurrentWeek = (): CurrentDays[] => {
       const currentDate: Date = new Date();
       const currentDayOfWeek: number = currentDate.getDay();
@@ -56,7 +75,7 @@ function App(): JSX.Element {
       const daysInWeek: Date[] = [];
 
       for (let i = 0; i < 7; i++) {
-        const day = new Date(startDate);
+        const day: Date = new Date(startDate);
         day.setDate(startDate.getDate() + i);
         daysInWeek.push(day);
       }
@@ -80,21 +99,21 @@ function App(): JSX.Element {
           date: splittedDate[1] + splittedDate[2] + splittedDate[3],
           tasks: storedTodosArray,
           link: splittedDate[0].slice(0, -1),
-        };
+        } as CurrentDays;
       });
     };
 
     const daysInCurrentWeek: CurrentDays[] = getDaysInCurrentWeek();
     setDays(daysInCurrentWeek);
-  }, []);
+  }, [currentDayName, navigation, storedTodosArray]);
 
   console.log(user);
 
   return (
     <>
-      <Container>
-        <DayContext.Provider value={{ days, setDays }}>
-          <AuthContext.Provider value={{ user, setUser }}>
+      <AuthContext.Provider value={{ user, setUser }}>
+        <Container>
+          <DayContext.Provider value={{ days, setDays }}>
             <Routes>
               {days.map((el: DayInfo) => {
                 return (
@@ -108,9 +127,9 @@ function App(): JSX.Element {
                 );
               })}
             </Routes>
-          </AuthContext.Provider>
-        </DayContext.Provider>
-      </Container>
+          </DayContext.Provider>
+        </Container>
+      </AuthContext.Provider>
     </>
   );
 }

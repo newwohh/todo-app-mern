@@ -78,10 +78,10 @@ exports.addTask = async (req, res) => {
 
 exports.deleteTask = async (req, res) => {
   try {
-    const { userId, taskId } = req.body;
+    const { userId, taskTitle } = req.body;
     const deleteTask = await Todo.findByIdAndUpdate(
       { _id: userId },
-      { $pull: { tasks: { _id: taskId } } },
+      { $pull: { tasks: { title: taskTitle } } },
       { new: true }
     );
 
@@ -101,7 +101,6 @@ exports.deleteTask = async (req, res) => {
 exports.getTasks = async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(id);
     const todoData = await Todo.findById({ _id: id }).select("tasks");
 
     res.status(200).json({
@@ -118,14 +117,15 @@ exports.getTasks = async (req, res) => {
 
 exports.deleteUserAlongWithTasks = async (req, res) => {
   try {
-    const { username } = req.body;
-    const todoData = await Todo.deleteOne({ username });
-
+    const { id } = req.body;
+    const todoData = await Todo.findByIdAndDelete({ _id: id });
+    console.log(id);
     res.status(200).json({
       success: true,
       data: todoData,
     });
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({
       success: false,
       error,
