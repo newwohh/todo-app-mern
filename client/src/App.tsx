@@ -1,8 +1,10 @@
 import React from "react";
-import Container from "./components/Container";
 import { Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Container from "./components/Container";
 import Today from "./pages/Today";
 import { DayContext } from "./context/DayContext";
+import { AuthContext } from "./context/AuthContext";
 
 interface Task {
   task: string;
@@ -23,9 +25,12 @@ interface CurrentDays {
 }
 
 function App(): JSX.Element {
+  const query = new QueryClient();
   const [days, setDays] = React.useState<DayInfo[]>([]);
+  const [user, setUser] = React.useState<string | undefined | null>(undefined);
 
   React.useEffect(() => {
+    setUser(localStorage.getItem("user"));
     const getDaysInCurrentWeek = (): CurrentDays[] => {
       const currentDate: Date = new Date();
       const currentDayOfWeek: number = currentDate.getDay();
@@ -66,25 +71,29 @@ function App(): JSX.Element {
     setDays(daysInCurrentWeek);
   }, []);
 
-  // console.log(days);
+  console.log(user);
 
   return (
     <>
       <Container>
         <DayContext.Provider value={{ days, setDays }}>
-          <Routes>
-            {days.map((el: DayInfo) => {
-              return (
-                <Route
-                  key={el.day}
-                  path={el.link}
-                  element={
-                    <Today day={el.day} date={el.date} tasks={el.tasks} />
-                  }
-                />
-              );
-            })}
-          </Routes>
+          <AuthContext.Provider value={{ user, setUser }}>
+            <QueryClientProvider client={query}>
+              <Routes>
+                {days.map((el: DayInfo) => {
+                  return (
+                    <Route
+                      key={el.day}
+                      path={el.link}
+                      element={
+                        <Today day={el.day} date={el.date} tasks={el.tasks} />
+                      }
+                    />
+                  );
+                })}
+              </Routes>
+            </QueryClientProvider>
+          </AuthContext.Provider>
         </DayContext.Provider>
       </Container>
     </>

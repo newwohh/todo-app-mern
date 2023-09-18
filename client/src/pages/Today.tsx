@@ -1,8 +1,11 @@
 import React from "react";
+import axios from "axios";
 import { Button, Modal, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import NewTaskModal from "../components/NewTaskModal";
 import Checkbox from "@mui/material/Checkbox";
+import { AuthContext } from "../context/AuthContext";
+import Login from "../components/Login";
 
 interface Task {
   task: string;
@@ -17,8 +20,28 @@ interface TodayProps {
 
 function Today({ day, date, tasks }: TodayProps): JSX.Element {
   const [open, setOpen] = React.useState<boolean>(false);
-  const handleOpen = () => setOpen(true);
+  const [openLogin, setOpenLogin] = React.useState<boolean>(false);
+  const { user } = React.useContext(AuthContext);
+
+  const handleOpen = async () => {
+    if (user) {
+      setOpen(true);
+      const userNew = await axios.post(
+        "http://localhost:5050/api/todo/addTask",
+        {
+          id: user,
+          // task
+        }
+      );
+
+      console.log(userNew);
+    } else if (!user) {
+      setOpenLogin(true);
+    }
+  };
+
   const handleClose = () => setOpen(false);
+  const handleCloseLogin = () => setOpenLogin(false);
 
   return (
     <div>
@@ -113,6 +136,14 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         />
+      </Modal>
+      <Modal
+        open={openLogin}
+        onClose={handleCloseLogin}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Login />
       </Modal>
     </div>
   );
