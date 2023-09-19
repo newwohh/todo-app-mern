@@ -29,7 +29,26 @@ interface CurrentDays {
 type User = string;
 
 function App(): JSX.Element {
-  const [days, setDays] = React.useState<DayInfo[]>([]);
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const currentDate: Date = new Date();
+  const currentDayOfWeek: number = currentDate.getDay();
+  const currentDayName = daysOfWeek[currentDayOfWeek];
+  const [days, setDays] = React.useState<DayInfo[]>([
+    {
+      day: "",
+      date: "",
+      link: `/${currentDayName}`,
+      tasks: [],
+    },
+  ]);
   const [user, setUser] = React.useState<User | null | string>(null);
 
   const getAllTodos = async () => {
@@ -50,18 +69,7 @@ function App(): JSX.Element {
     getAllTodos();
   }
   // console.log(storedTodosArray);
-  const currentDate: Date = new Date();
-  const currentDayOfWeek: number = currentDate.getDay();
-  const daysOfWeek = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  const currentDayName = daysOfWeek[currentDayOfWeek];
+
   const navigation = useNavigate();
 
   React.useEffect(() => {
@@ -98,7 +106,7 @@ function App(): JSX.Element {
           day: splittedDate[0].slice(0, -1),
           date: splittedDate[1] + splittedDate[2] + splittedDate[3],
           tasks: storedTodosArray,
-          link: splittedDate[0].slice(0, -1),
+          link: "/" + splittedDate[0].slice(0, -1),
         } as CurrentDays;
       });
     };
@@ -107,7 +115,7 @@ function App(): JSX.Element {
     setDays(daysInCurrentWeek);
   }, [currentDayName, navigation, storedTodosArray]);
 
-  console.log(user);
+  console.log(days);
 
   return (
     <>
@@ -115,7 +123,7 @@ function App(): JSX.Element {
         <Container>
           <DayContext.Provider value={{ days, setDays }}>
             <Routes>
-              {days.map((el: DayInfo) => {
+              {days?.map((el: DayInfo) => {
                 return (
                   <Route
                     key={el.day}
