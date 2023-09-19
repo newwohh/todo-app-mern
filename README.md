@@ -15,12 +15,11 @@ Welcome to our Todo App, a powerful task management tool built with the MERN sta
 
 To run this app locally, follow these steps:
 
-   ```bash
    git clone https://github.com/yourusername/todo-app.git
-   ```bash
+   
    cd todo-app
-   ```bash
+   
    npm install
-   ```bash
+   
    npm run dev
 
