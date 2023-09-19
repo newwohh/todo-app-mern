@@ -30,7 +30,6 @@ function Container({ children }: { children: React.ReactNode }) {
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("todos");
-    location.reload();
     navigation("/");
   };
 
@@ -78,7 +77,7 @@ function Container({ children }: { children: React.ReactNode }) {
           }}
           onClick={handleClickOpen}
         >
-          Open alert dialog
+          User
         </Button>
       ) : (
         ""
