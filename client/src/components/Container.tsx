@@ -42,8 +42,10 @@ function Container({ children }: { children: React.ReactNode }) {
         }
       );
 
+      navigation("/");
       console.log(res);
-      location.reload();
+      localStorage.removeItem("user");
+      localStorage.removeItem("todos");
     } catch (error) {
       console.log((error as Error).message);
     }
