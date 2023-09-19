@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { Box, Button, TextField } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const style = {
   position: "absolute",
@@ -26,6 +27,7 @@ function Login() {
   const [username, setUsername] = React.useState<User>({
     username: "",
   });
+  const navigation = useNavigate();
 
   const loginOrRegisterUser = async () => {
     try {
@@ -36,7 +38,7 @@ function Login() {
         }
       );
       console.log(response.data.data.user._id);
-      location.reload();
+      navigation("/");
       localStorage.setItem("user", JSON.stringify(response.data.data.user._id));
     } catch (error) {
       console.log(error);
