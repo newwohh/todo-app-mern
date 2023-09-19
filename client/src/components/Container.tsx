@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface SetAuthContext {
   user: string;
@@ -14,6 +15,7 @@ function Container({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
   const authContextValue = React.useContext(AuthContext) as SetAuthContext;
   const { user } = authContextValue;
+  const navigation = useNavigate();
   const id = JSON.parse(user);
   console.log(id);
 
@@ -29,6 +31,7 @@ function Container({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("user");
     localStorage.removeItem("todos");
     location.reload();
+    navigation("/");
   };
 
   const deleteMe = async () => {

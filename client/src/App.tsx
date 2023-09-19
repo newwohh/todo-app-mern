@@ -2,9 +2,10 @@ import React from "react";
 import axios, { AxiosResponse } from "axios";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Container from "./components/Container";
-// import Today from "./pages/Today";
+import Today from "./pages/Today";
 import { DayContext } from "./context/DayContext";
 import { AuthContext } from "./context/AuthContext";
+import Start from "./pages/Start";
 
 interface Task {
   day: string;
@@ -28,18 +29,6 @@ interface CurrentDays {
 type User = string;
 
 function App(): JSX.Element {
-  const daysOfWeek = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
-  const currentDate: Date = new Date();
-  const currentDayOfWeek: number = currentDate.getDay();
-  const currentDayName = daysOfWeek[currentDayOfWeek];
   const [days, setDays] = React.useState<DayInfo[]>([]);
   const [user, setUser] = React.useState<User | null | string>(null);
 
@@ -66,7 +55,6 @@ function App(): JSX.Element {
 
   React.useEffect(() => {
     setUser(localStorage.getItem("user"));
-    // navigation(`/${currentDayName}`);
     const getDaysInCurrentWeek = (): CurrentDays[] => {
       const currentDate: Date = new Date();
       const currentDayOfWeek: number = currentDate.getDay();
@@ -105,7 +93,7 @@ function App(): JSX.Element {
 
     const daysInCurrentWeek: CurrentDays[] = getDaysInCurrentWeek();
     setDays(daysInCurrentWeek);
-  }, [currentDayName, navigation, storedTodosArray]);
+  }, [navigation, storedTodosArray]);
 
   console.log(days);
 
@@ -115,18 +103,20 @@ function App(): JSX.Element {
         <Container>
           <DayContext.Provider value={{ days, setDays }}>
             <Routes>
-              {/* {days?.map((el: DayInfo) => {
-                return (
-                  <Route
-                    key={el.day}
-                    path={el.link}
-                    element={
-                      <Today day={el.day} date={el.date} tasks={el.tasks} />
-                    }
-                  />
-                );
-              })} */}
-              <Route path="/" element={<h1>Login</h1>} />
+              <Route path="/" element={<Start />} />
+              {days.length > 1 || days === undefined || days === null
+                ? days?.map((el: DayInfo) => {
+                    return (
+                      <Route
+                        key={el.day}
+                        path={el.link}
+                        element={
+                          <Today day={el.day} date={el.date} tasks={el.tasks} />
+                        }
+                      />
+                    );
+                  })
+                : "Loading"}
             </Routes>
           </DayContext.Provider>
         </Container>
