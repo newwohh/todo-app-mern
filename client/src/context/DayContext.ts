@@ -4,7 +4,7 @@ interface Task {
   day: string;
   title: string;
   completed: boolean;
-  _id: string;
+  // _id: string;
 }
 
 interface DayInfo {

@@ -14,14 +14,14 @@ interface Tasks {
   title: string;
   day: string;
   completed: boolean;
-  _id: string;
+  // _id: string;
 }
 
 interface Task {
   day: string;
   title: string;
   completed: boolean;
-  _id: string;
+  // _id: string;
 }
 
 interface TodayProps {
@@ -214,22 +214,25 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        aria-labelledby="modal-modal"
+        aria-describedby="modal-modal"
       >
         <NewTaskModal
           day={day}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
+          aria-labelledby="modal-modal-new"
+          aria-describedby="modal-modal-new"
         />
       </Modal>
       <Modal
         open={openLogin}
         onClose={handleCloseLogin}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        aria-labelledby="modal-modal"
+        aria-describedby="modal-modal"
       >
-        <Login />
+        <Login
+          aria-labelledby="modal-modal-login"
+          aria-describedby="modal-modal-login"
+        />
       </Modal>
     </motion.div>
   );

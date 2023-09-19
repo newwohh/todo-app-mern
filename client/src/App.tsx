@@ -2,7 +2,7 @@ import React from "react";
 import axios, { AxiosResponse } from "axios";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Container from "./components/Container";
-import Today from "./pages/Today";
+// import Today from "./pages/Today";
 import { DayContext } from "./context/DayContext";
 import { AuthContext } from "./context/AuthContext";
 
@@ -10,7 +10,6 @@ interface Task {
   day: string;
   title: string;
   completed: boolean;
-  _id: string;
 }
 interface DayInfo {
   day: string;
@@ -41,14 +40,7 @@ function App(): JSX.Element {
   const currentDate: Date = new Date();
   const currentDayOfWeek: number = currentDate.getDay();
   const currentDayName = daysOfWeek[currentDayOfWeek];
-  const [days, setDays] = React.useState<DayInfo[]>([
-    {
-      day: "",
-      date: "",
-      link: `/${currentDayName}`,
-      tasks: [],
-    },
-  ]);
+  const [days, setDays] = React.useState<DayInfo[]>([]);
   const [user, setUser] = React.useState<User | null | string>(null);
 
   const getAllTodos = async () => {
@@ -74,7 +66,7 @@ function App(): JSX.Element {
 
   React.useEffect(() => {
     setUser(localStorage.getItem("user"));
-    navigation(`/${currentDayName}`);
+    // navigation(`/${currentDayName}`);
     const getDaysInCurrentWeek = (): CurrentDays[] => {
       const currentDate: Date = new Date();
       const currentDayOfWeek: number = currentDate.getDay();
@@ -123,7 +115,7 @@ function App(): JSX.Element {
         <Container>
           <DayContext.Provider value={{ days, setDays }}>
             <Routes>
-              {days?.map((el: DayInfo) => {
+              {/* {days?.map((el: DayInfo) => {
                 return (
                   <Route
                     key={el.day}
@@ -133,7 +125,8 @@ function App(): JSX.Element {
                     }
                   />
                 );
-              })}
+              })} */}
+              <Route path="/" element={<h1>Login</h1>} />
             </Routes>
           </DayContext.Provider>
         </Container>
