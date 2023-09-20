@@ -25,7 +25,7 @@ exports.registerUser = async (req, res) => {
           user,
         },
       });
-    } else {
+    } else if (!user) {
       const user = await Todo.create({ username });
       let id = user.id;
 
