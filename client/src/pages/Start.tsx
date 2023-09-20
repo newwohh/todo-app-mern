@@ -20,6 +20,8 @@ function Start() {
   return (
     <div>
       <Typography
+        variant="h4"
+        data-testid="welcome-message"
         sx={{
           fontWeight: 1000,
           fontSize: "30px",
