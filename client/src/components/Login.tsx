@@ -49,6 +49,7 @@ function Login() {
     <div>
       <Box sx={style}>
         <TextField
+          data-testid="username"
           hiddenLabel
           label="Login/Register"
           InputProps={{
@@ -65,6 +66,7 @@ function Login() {
           }
         />
         <Button
+          data-testid="login-button"
           sx={{
             height: "50px",
             marginLeft: "40px",

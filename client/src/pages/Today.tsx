@@ -127,6 +127,7 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
         }}
       >
         <Typography
+          data-testid="day"
           variant="h3"
           sx={{ fontFamily: "Montserrat, sans-serif", fontWeight: 1000 }}
         >

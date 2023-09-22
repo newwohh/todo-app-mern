@@ -3,6 +3,44 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import Start from "./pages/Start";
 import { MemoryRouter } from "react-router-dom";
 import Today from "./pages/Today";
+import Login from "./components/Login";
+import { AuthContext } from "./context/AuthContext";
+import { DayContext } from "./context/DayContext";
+import React from "react";
+
+interface Task {
+  day: string;
+  title: string;
+  completed: boolean;
+}
+
+interface DayInfo {
+  day: string;
+  date: string;
+  link: string;
+  tasks: Task[];
+}
+
+type User = string;
+
+const MockToday = () => {
+  const [user, setUser] = React.useState<User | null | string>(null);
+  const [days, setDays] = React.useState<DayInfo[]>([]);
+
+  return (
+    <AuthContext.Provider value={{ user, setUser }}>
+      <DayContext.Provider value={{ days, setDays }}>
+        <MemoryRouter>
+          <Today
+            day="Monday"
+            date="September 17, 2023"
+            tasks={[{ day: "Monday", title: "Monday", completed: false }]}
+          />
+        </MemoryRouter>
+      </DayContext.Provider>
+    </AuthContext.Provider>
+  );
+};
 
 describe("<Start /> Component", () => {
   it("should render without errors", () => {
@@ -37,23 +75,46 @@ describe("<Start /> Component", () => {
     fireEvent.click(welcomeButton);
     expect(welcomeButton).toBeInTheDocument();
   });
+});
 
-  it("should render without errors", async () => {
+describe("<Login /> Component", () => {
+  it("check the login include input", () => {
     render(
-      <Today
-        day="Monday"
-        date="September 17, 2023"
-        tasks={[{ day: "test", title: "Monday", completed: false }]}
-      />
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
     );
-    await waitFor(() => {
-      const dayTypography = screen.getByTestId("start-button");
-      fireEvent.click(dayTypography);
-      expect(dayTypography).toBeInTheDocument();
-    });
+
+    const loginInput = screen.getByTestId("username");
+    expect(loginInput).toBeInTheDocument();
+  });
+
+  it("check login include button", () => {
+    render(
+      <MemoryRouter>
+        <Login />
+      </MemoryRouter>
+    );
+
+    const loginButton = screen.getByTestId("login-button");
+    fireEvent.click(loginButton);
+    expect(loginButton).toBeInTheDocument();
   });
 });
 
-// describe("<Today /> Component", () => {
+describe("<Today /> Component", () => {
+  it("should start button in the component", async () => {
+    render(<MockToday />);
 
-// });
+    const startButton = await waitFor(() => screen.getByTestId("start-button")); // fireEvent.click(loginButton);
+    fireEvent.click(startButton);
+    expect(startButton).toBeInTheDocument();
+  });
+
+  it("show today", async () => {
+    render(<MockToday />);
+
+    const showToday = await waitFor(() => screen.getByTestId("day"));
+    expect(showToday).not.toBeNull();
+  });
+});
