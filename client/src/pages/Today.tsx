@@ -193,6 +193,7 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
           })}
         </div>
         <Button
+          data-testid="start-button"
           startIcon={<AddIcon />}
           sx={{
             padding: "15px",

@@ -32,6 +32,7 @@ function Start() {
         Start Your Day Strong!
       </Typography>
       <Button
+        data-testid="start-button"
         sx={{
           height: "50px",
           padding: "15px",
