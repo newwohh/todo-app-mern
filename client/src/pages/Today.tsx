@@ -134,6 +134,7 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
           {day}
         </Typography>
         <Typography
+          data-testid="date"
           sx={{
             marginTop: "10px",
             color: "grey",

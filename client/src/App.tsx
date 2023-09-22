@@ -104,7 +104,7 @@ function App(): JSX.Element {
           <DayContext.Provider value={{ days, setDays }}>
             <Routes>
               <Route path="/" element={<Start />} />
-              {days.length > 1 || days === undefined || days === null
+              {days.length > 1 || days !== undefined || days !== null
                 ? days?.map((el: DayInfo) => {
                     return (
                       <Route

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import Start from "./pages/Start";
 import { MemoryRouter } from "react-router-dom";
 import Today from "./pages/Today";
@@ -24,6 +24,11 @@ interface DayInfo {
 type User = string;
 
 const MockToday = () => {
+  const tasks = [
+    { day: "Monday", title: "Task 1", completed: false },
+    { day: "Monday", title: "Task 2", completed: true },
+    { day: "Monday", title: "Task 3", completed: false },
+  ];
   const [user, setUser] = React.useState<User | null | string>(null);
   const [days, setDays] = React.useState<DayInfo[]>([]);
 
@@ -31,11 +36,7 @@ const MockToday = () => {
     <AuthContext.Provider value={{ user, setUser }}>
       <DayContext.Provider value={{ days, setDays }}>
         <MemoryRouter>
-          <Today
-            day="Monday"
-            date="September 17, 2023"
-            tasks={[{ day: "Monday", title: "Monday", completed: false }]}
-          />
+          <Today day="Monday" date="September 17, 2023" tasks={tasks} />
         </MemoryRouter>
       </DayContext.Provider>
     </AuthContext.Provider>
@@ -103,18 +104,25 @@ describe("<Login /> Component", () => {
 });
 
 describe("<Today /> Component", () => {
-  it("should start button in the component", async () => {
+  it("should start button in the component", () => {
     render(<MockToday />);
 
-    const startButton = await waitFor(() => screen.getByTestId("start-button")); // fireEvent.click(loginButton);
+    const startButton = screen.getByTestId("start-button");
     fireEvent.click(startButton);
     expect(startButton).toBeInTheDocument();
   });
 
-  it("show today", async () => {
+  it("show page today", () => {
     render(<MockToday />);
 
-    const showToday = await waitFor(() => screen.getByTestId("day"));
+    const showToday = screen.getByTestId("day");
+    expect(showToday).not.toBeNull();
+  });
+
+  it("check page show date", () => {
+    render(<MockToday />);
+
+    const showToday = screen.getByTestId("date");
     expect(showToday).not.toBeNull();
   });
 });
