@@ -2,21 +2,7 @@ import React from "react";
 import axios from "axios";
 import { Box, Button, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  p: 4,
-  display: "flex",
-  justifyContent: "center",
-  borderRadius: "30px",
-  height: "100px",
-  alignItems: "center",
-};
+import { loginButtonStyles, loginContainerStyle } from "../styles/styles";
 
 interface User {
   username: string;
@@ -47,7 +33,7 @@ function Login() {
 
   return (
     <div>
-      <Box sx={style}>
+      <Box sx={loginContainerStyle}>
         <TextField
           data-testid="username"
           hiddenLabel
@@ -67,19 +53,7 @@ function Login() {
         />
         <Button
           data-testid="login-button"
-          sx={{
-            height: "50px",
-            marginLeft: "40px",
-            padding: "15px",
-            backgroundColor: "lightcoral",
-            color: "white",
-            borderRadius: "25px",
-            fontFamily: "Montserrat, sans-serif",
-            "&:hover": {
-              backgroundColor: "white",
-              color: "lightcoral",
-            },
-          }}
+          sx={loginButtonStyles}
           onClick={loginOrRegisterUser}
         >
           Create/Login

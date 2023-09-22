@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import { Button, CircularProgress, TextField } from "@mui/material";
 import { DayContext } from "../context/DayContext";
 import { AuthContext } from "../context/AuthContext";
+import { newTaskButton } from "../styles/styles";
 
 interface Task {
   day: string;
@@ -114,22 +115,7 @@ export default function NewTaskModal({ day }: { day: string }): JSX.Element {
             })
           }
         />
-        <Button
-          sx={{
-            height: "50px",
-            marginLeft: "40px",
-            padding: "15px",
-            backgroundColor: "lightcoral",
-            color: "white",
-            borderRadius: "25px",
-            fontFamily: "Montserrat, sans-serif",
-            "&:hover": {
-              backgroundColor: "white",
-              color: "lightcoral",
-            },
-          }}
-          onClick={addNewTask}
-        >
+        <Button sx={newTaskButton} onClick={addNewTask}>
           New task
         </Button>
       </Box>

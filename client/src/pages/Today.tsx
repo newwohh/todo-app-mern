@@ -9,6 +9,7 @@ import Login from "../components/Login";
 // import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { DayContext } from "../context/DayContext";
+import { newTaskButton2, todayContainer } from "../styles/styles";
 
 interface Tasks {
   title: string;
@@ -144,16 +145,7 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
         >
           {date.split(",")[0] + " " + date.split(",")[1]}
         </Typography>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginTop: "20px",
-            marginBottom: "20px",
-            flexDirection: "column",
-          }}
-        >
+        <div style={todayContainer}>
           {tasks.map((el, i) => {
             return (
               <motion.div
@@ -197,18 +189,7 @@ function Today({ day, date, tasks }: TodayProps): JSX.Element {
         <Button
           data-testid="start-button"
           startIcon={<AddIcon />}
-          sx={{
-            padding: "15px",
-            width: "140px",
-            backgroundColor: "lightcoral",
-            color: "white",
-            borderRadius: "25px",
-            fontFamily: "Montserrat, sans-serif",
-            "&:hover": {
-              backgroundColor: "white",
-              color: "lightcoral",
-            },
-          }}
+          sx={newTaskButton2}
           onClick={handleOpen}
         >
           New task

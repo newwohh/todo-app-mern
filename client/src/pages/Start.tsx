@@ -1,5 +1,6 @@
 import { Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { startButton } from "../styles/styles";
 
 function Start() {
   const daysOfWeek = [
@@ -33,18 +34,7 @@ function Start() {
       </Typography>
       <Button
         data-testid="start-button"
-        sx={{
-          height: "50px",
-          padding: "15px",
-          backgroundColor: "lightcoral",
-          color: "white",
-          borderRadius: "25px",
-          fontFamily: "Montserrat, sans-serif",
-          "&:hover": {
-            backgroundColor: "white",
-            color: "lightcoral",
-          },
-        }}
+        sx={startButton}
         onClick={() => navigation(`/${currentDayName}`)}
       >
         Start your day

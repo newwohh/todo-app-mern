@@ -5,6 +5,12 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import {
+  childContainer,
+  container,
+  deleteButtonStyles,
+  userButtonStyles,
+} from "../styles/styles";
 
 interface SetAuthContext {
   user: string;
@@ -52,31 +58,11 @@ function Container({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: "lightcoral",
-        height: "100vh",
-        width: "100vw",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column-reverse",
-      }}
-    >
+    <div style={container}>
       {user ? (
         <Button
           variant="outlined"
-          sx={{
-            backgroundColor: "white",
-            borderRadius: "20px",
-            color: "lightcoral",
-            border: "none",
-            boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
-            "&:hover": {
-              backgroundColor: "white",
-              border: "none",
-            },
-          }}
+          sx={userButtonStyles}
           onClick={handleClickOpen}
         >
           User
@@ -93,41 +79,12 @@ function Container({ children }: { children: React.ReactNode }) {
       >
         <DialogActions sx={{ padding: "20px", borderRadius: "60px" }}>
           <Button onClick={logout}>Logout</Button>
-          <Button
-            onClick={deleteMe}
-            sx={{
-              backgroundColor: "white",
-              borderRadius: "20px",
-              color: "lightcoral",
-              border: "none",
-              "&:hover": {
-                backgroundColor: "white",
-                border: "none",
-              },
-            }}
-            autoFocus
-          >
+          <Button onClick={deleteMe} sx={deleteButtonStyles} autoFocus>
             Delete Account
           </Button>
         </DialogActions>
       </Dialog>
-      <div
-        style={{
-          marginBottom: "50px",
-          height: "500px",
-          width: "450px",
-          backgroundColor: "white",
-          borderRadius: "17px",
-          textAlign: "center",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          boxShadow:
-            "rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px",
-        }}
-      >
-        {children}
-      </div>
+      <div style={childContainer}>{children}</div>
     </div>
   );
 }
